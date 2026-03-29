@@ -59,7 +59,8 @@ async function handleSubmit(e) {
     if (page * 15 < totalHits) {
       showLoadMoreButton();
     } else {
-      hideLoadMoreButton();
+        hideLoadMoreButton();
+        
       iziToast.info({
         message: "We're sorry, but you've reached the end of search results.",
       });
@@ -74,9 +75,11 @@ async function handleSubmit(e) {
 }
 
 async function handleLoadMore() {
-  page += 1;
+page += 1;
+    
+hideLoadMoreButton();
 
-  showLoader();
+showLoader();
 
   try {
     const data = await getImagesByQuery(currentQuery, page);
