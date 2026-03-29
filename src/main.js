@@ -47,65 +47,67 @@ async function handleSubmit(e) {
     totalHits = data.totalHits;
 
     if (data.hits.length === 0) {
-      iziToast.error({
-        message:
-          "Sorry, there are no images matching your search query. Please try again!",
-      });
-      return;
+        iziToast.error({
+        message:"Sorry, there are no images matching your search query. Please try again!",
+        });
+    return;
     }
 
-    createGallery(data.hits);
+      createGallery(data.hits);
+      
+if (page * 15 < totalHits) {
+    showLoadMoreButton();
+} else {
+    hideLoadMoreButton();
 
-    if (page * 15 < totalHits) {
-      showLoadMoreButton();
-    } else {
-        hideLoadMoreButton();
-        
-      iziToast.info({
-        message: "We're sorry, but you've reached the end of search results.",
-      });
-    }
-  } catch (error) {
-    iziToast.error({
-      message: "Something went wrong!",
+    iziToast.info({
+    message: "We're sorry, but you've reached the end of search results.",
     });
-  } finally {
-    hideLoader();
-  }
+}
+    } catch (error) {
+    iziToast.error({
+    message: "Error loading more images",
+    });
+} finally {
+hideLoader();
+    }
 }
 
 async function handleLoadMore() {
-page += 1;
+    page += 1;
     
-hideLoadMoreButton();
+    hideLoadMoreButton();
+    showLoader();
 
-showLoader();
-
-  try {
+try {
     const data = await getImagesByQuery(currentQuery, page);
 
     createGallery(data.hits);
 
     const card = document
-      .querySelector(".gallery-item")
-      .getBoundingClientRect();
+    .querySelector(".gallery-item")
+    .getBoundingClientRect();
 
     window.scrollBy({
-      top: card.height * 2,
-      behavior: "smooth",
-    });
+    top: card.height * 2,
+    behavior: "smooth",
+});
 
-    if (page * 15 >= totalHits) {
-      hideLoadMoreButton();
-      iziToast.info({
-        message: "We're sorry, but you've reached the end of search results.",
-      });
-    }
-  } catch {
-    iziToast.error({
-      message: "Error loading more images",
-    });
-  } finally {
-    hideLoader();
-  }
+
+if (page * 15 < totalHits) {
+    showLoadMoreButton();
+} else {
+    hideLoadMoreButton();
+
+iziToast.info({
+message: "We're sorry, but you've reached the end of search results.",
+});
+}
+} catch (error) {
+iziToast.error({
+    message: "Error loading more images",
+});
+} finally {
+hideLoader();
+ }
 }
